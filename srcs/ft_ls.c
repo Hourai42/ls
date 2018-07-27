@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 	{
 		while (*argv)
 		{
-			flag = 0;
+			flag = 0; // Change error_messages to take a flag pointer, saves space.
 			flag = read_directories(*argv, options);
 			error_messages(flag, *argv);
 			argv++;
