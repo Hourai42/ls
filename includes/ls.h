@@ -21,6 +21,9 @@
 #define NO 0
 #define ILLEGAL_OPTION -1
 #define NONEXISTENT_DIR -2
+#define EXIT -10
+#define STAY 10
+#define VALID_OPTION 2
 
 #define OPT_l(x) (x & 1)
 #define OPT_R(x) (x & 2)
