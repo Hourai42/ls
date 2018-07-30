@@ -49,16 +49,19 @@ void	set_flags(unsigned int *options, int *flag, int argc)
 	argc = 0;
 }
 
-int		error_messages(int flag, char *error)
+int		error_messages(int *flag, char *error)
 {
-	if (flag == ILLEGAL_OPTION)
+	if (*flag == ILLEGAL_OPTION)
 	{
 		ft_printf("ls: illegal option -- ");
 		ft_printf("%c\n", *error);
 		exit(0);
 	}
-	else if (flag == NONEXISTENT_DIR)
-		ft_printf("Fuck u m8");
+	else if (*flag == NONEXISTENT_DIR)
+	{
+		ft_printf("ls: %s: No such file or directory\n", error);
+		*flag = 0;
+	}
 	return (STAY);
 }
 
@@ -103,9 +106,23 @@ int	set_options(char **argv, unsigned int *options)
 		return (1);
 }
 
+/*
+** Sort by alphabetical order in Linked List
+** Check if directory, add to RecurseLinkedList
+*/
+
 int	read_directories(char *filename, unsigned int options)
 {
-	options = 0; filename = 0;
+	DIR *dir_ptr;
+	struct dirent *entry;
+
+	options = 0;
+	dir_ptr = opendir(filename);
+	if (dir_ptr == NULL)
+		return (NONEXISTENT_DIR);
+	while ((entry = readdir(dir_ptr)) != NULL)
+		ft_printf("%s\n", entry->d_name);
+	closedir(dir_ptr);
 	return (0);
 }
 
@@ -134,7 +151,7 @@ int main(int argc, char **argv)
 		if ((flag = set_options(argv, &options)) == VALID_OPTION)
 			argv++;
 		else
-			error_messages(flag, *argv);
+			error_messages(&flag, *argv);
 	}
 	if (*argv == 0)
 		read_directories(".", options);
@@ -142,9 +159,8 @@ int main(int argc, char **argv)
 	{
 		while (*argv)
 		{
-			flag = 0; // Change error_messages to take a flag pointer, saves space.
 			flag = read_directories(*argv, options);
-			error_messages(flag, *argv);
+			error_messages(&flag, *argv);
 			argv++;
 		}
 	}

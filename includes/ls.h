@@ -54,4 +54,15 @@ typedef struct s_queue
     t_node *back;
 }               t_queue;
 
+typedef struct s_lnode
+{
+    void *content;
+    struct s_node *next;
+}               t_lnode;
+
+typedef struct s_linked_list
+{
+    t_lnode *start;
+}               t_linked_list;
+
 #endif
