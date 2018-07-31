@@ -137,6 +137,7 @@ int	read_directories(char *filename, unsigned int options)
 		add_node(entry->d_name, names);
 	option_handler(options, names);
 	closedir(dir_ptr);
+	// Names->front will have to be the sorted list so you can free correctly
 	free_list(&names);
 	return (0);
 }

@@ -73,6 +73,15 @@ typedef struct s_linked_list
 t_linked_list *create_list(void);
 void    add_node(void *content, t_linked_list *list);
 void free_list(t_linked_list **list);
-void read_list(t_linked_list *list);
+void read_list(t_lnode *list);
 
+/*
+** Mergesort functions
+*/
+
+t_lnode *mergesort_list(t_lnode *list, int cmp(void *one, void *two));
+t_lnode *center_pointer(t_lnode *list);
+t_lnode *merge_list(t_lnode *left, t_lnode *right, int cmp (void *one, void *two));
+
+int ft_strcmp2(void *str1, void *str2);
 #endif

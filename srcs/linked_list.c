@@ -49,18 +49,85 @@ void free_list(t_linked_list **list)
     free(*list);
 }
 
-void read_list(t_linked_list *list)
+void read_list(t_lnode *list)
 {
-    t_lnode *ptr;
-
-    ptr = list->start;
-    while (ptr != NULL)
+    while (list != NULL)
     {
-        printf("%s\n", (char *)ptr->content);
-        ptr = ptr->next;
+        printf("%s\n", (char *)list->content);
+        list = list->next;
     }
 }
 
 /*
 ** Functions to mergesort a linked list!
+** Observe how all the pointers are fixed later.
 */
+
+t_lnode *mergesort_list(t_lnode *list, int (*cmp)(void *one, void *two))
+{
+ // Trivial case.
+    if (!list || !list->next)
+        return list;
+
+    t_lnode *right = list,
+            *temp  = list,
+            *last  = list,
+            *result = 0,
+            *next   = 0,
+            *tail   = 0;
+
+    // Find halfway through the list (by running two pointers, one at twice the speed of the other).
+    while (temp && temp->next)
+    {
+        last = right;
+        right = right->next;
+        temp = temp->next->next;
+    }
+
+    // Break the list in two. (prev pointers are broken here, but we fix later)
+    last->next = 0;
+
+    // Recurse on the two smaller lists:
+    list = mergesort_list(list, cmp);
+    right = mergesort_list(right, cmp);
+
+    // Merge:
+    while (list || right)
+    {
+        // Take from empty lists, or compare:
+        if (!right) {
+            next = list;
+            list = list->next;
+        } else if (!list) {
+            next = right;
+            right = right->next;
+        } else if (cmp(list->content, right->content) < 0) {
+            next = list;
+            list = list->next;
+        } else {
+            next = right;
+            right = right->next;
+        }
+        if (!result) {
+            result=next;
+        } else {
+            tail->next=next;
+        }
+        tail = next;
+    }
+    return result;
+}
+
+int ft_strcmp2(void *str1, void *str2)
+{
+    int i;
+    char *s1;
+    char *s2;
+
+    i = 0;
+    s1 = (char *)str1;
+    s2 = (char *)str2;
+    while (s1[i] && s2[i] && s1[i] == s2[i])
+        i++;
+    return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
