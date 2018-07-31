@@ -106,23 +106,38 @@ int	set_options(char **argv, unsigned int *options)
 		return (1);
 }
 
+void	option_handler(unsigned int options, t_linked_list *names)
+{
+	options = 0; names = 0;
+}
+
 /*
 ** Sort by alphabetical order in Linked List
-** Check if directory, add to RecurseLinkedList
+** Go through list twice-- once to print names, then another time 
+** to recurse into directories. Lole, this is super lazy. 
+** -l is long format with all the information
+** -t is sort by time modified
+** -r is reverse
+** -R is recursive
+** -a is include hidden
 */
 
 int	read_directories(char *filename, unsigned int options)
 {
 	DIR *dir_ptr;
 	struct dirent *entry;
+	t_linked_list *names;
 
 	options = 0;
+	names = create_list();
 	dir_ptr = opendir(filename);
 	if (dir_ptr == NULL)
 		return (NONEXISTENT_DIR);
 	while ((entry = readdir(dir_ptr)) != NULL)
-		ft_printf("%s\n", entry->d_name);
+		add_node(entry->d_name, names);
+	option_handler(options, names);
 	closedir(dir_ptr);
+	free_list(&names);
 	return (0);
 }
 

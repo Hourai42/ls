@@ -57,12 +57,22 @@ typedef struct s_queue
 typedef struct s_lnode
 {
     void *content;
-    struct s_node *next;
+    struct s_lnode *next;
 }               t_lnode;
 
 typedef struct s_linked_list
 {
     t_lnode *start;
+    t_lnode *end;
 }               t_linked_list;
+
+/*
+** Linked List functions
+*/
+
+t_linked_list *create_list(void);
+void    add_node(void *content, t_linked_list *list);
+void free_list(t_linked_list **list);
+void read_list(t_linked_list *list);
 
 #endif
