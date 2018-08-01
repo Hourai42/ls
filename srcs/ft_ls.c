@@ -87,6 +87,10 @@ void	use_option_macros(unsigned int *options, char letter)
 		OPT_t_on(*options);
 }
 
+/*
+** Need to fix multiple option input if the path is still -r -t etc instead of -rt
+*/
+
 int	set_options(char **argv, unsigned int *options)
 {
 	if (**argv == '-')
@@ -100,15 +104,43 @@ int	set_options(char **argv, unsigned int *options)
 				return (ILLEGAL_OPTION);
 			(*argv)++;
 		}
-		return (VALID_OPTION);
+		return (0);
 	}
 	else
 		return (1);
 }
 
+void	handle_sort(unsigned int options, t_linked_list *names)
+{
+	options = 0;
+	//if (OPT_r(options))
+	//	names->start = mergesort_list(names->start, &ft_strcmp2_r);
+	//else
+	//	names->start = mergesort_list(names->start, &ft_strcmp2);
+	//if (OPT_t(options) && OPT_r(options))
+	//	names->start = mergesort_list(names->start, &time_cmp);
+	//else if (OPT_t(options))
+	names->start = mergesort_list(names->start, &time_cmp);
+}
+
 void	option_handler(unsigned int options, t_linked_list *names)
 {
-	options = 0; names = 0;
+	handle_sort(options, names);
+}
+
+/*
+** Haven't used stat, lstat, getpwuid, getgrgid, listxattr, getxattr, time, ctime, readlink
+** Looking inside of the headers to see what the structs consist of is nice.
+*/
+
+void	experiments(unsigned int options, t_linked_list *names)
+{
+	struct stat info;
+
+	options = 0, names = 0;
+	stat(".", &info);
+	ft_printf("hi");
+	ft_printf("%d\n", info.st_mtime);
 }
 
 /*
@@ -128,7 +160,6 @@ int	read_directories(char *filename, unsigned int options)
 	struct dirent *entry;
 	t_linked_list *names;
 
-	options = 0;
 	names = create_list();
 	dir_ptr = opendir(filename);
 	if (dir_ptr == NULL)
@@ -136,6 +167,8 @@ int	read_directories(char *filename, unsigned int options)
 	while ((entry = readdir(dir_ptr)) != NULL)
 		add_node(entry->d_name, names);
 	option_handler(options, names);
+	//experiments(options, names);
+	read_list(names->start);
 	closedir(dir_ptr);
 	// Names->front will have to be the sorted list so you can free correctly
 	free_list(&names);
@@ -164,7 +197,7 @@ int main(int argc, char **argv)
 	set_flags(&options, &flag, argc);
 	while (*argv && flag == 0)
 	{
-		if ((flag = set_options(argv, &options)) == VALID_OPTION)
+		if ((flag = set_options(argv, &options)) == 0)
 			argv++;
 		else
 			error_messages(&flag, *argv);

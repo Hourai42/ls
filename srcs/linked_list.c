@@ -63,7 +63,7 @@ void read_list(t_lnode *list)
 ** Observe how all the pointers are fixed later.
 */
 
-t_lnode *mergesort_list(t_lnode *list, int (*cmp)(void *one, void *two))
+t_lnode *mergesort_list(t_lnode *list, long int (*cmp)(void *one, void *two))
 {
  // Trivial case.
     if (!list || !list->next)
@@ -116,18 +116,4 @@ t_lnode *mergesort_list(t_lnode *list, int (*cmp)(void *one, void *two))
         tail = next;
     }
     return result;
-}
-
-int ft_strcmp2(void *str1, void *str2)
-{
-    int i;
-    char *s1;
-    char *s2;
-
-    i = 0;
-    s1 = (char *)str1;
-    s2 = (char *)str2;
-    while (s1[i] && s2[i] && s1[i] == s2[i])
-        i++;
-    return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }

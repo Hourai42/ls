@@ -16,6 +16,8 @@
 #include <libft.h>
 #include "ft_printf.h"
 #include <dirent.h>
+#include <sys/stat.h>
+#include <time.h>
 
 #define YES 1
 #define NO 0
@@ -79,9 +81,11 @@ void read_list(t_lnode *list);
 ** Mergesort functions
 */
 
-t_lnode *mergesort_list(t_lnode *list, int cmp(void *one, void *two));
-t_lnode *center_pointer(t_lnode *list);
-t_lnode *merge_list(t_lnode *left, t_lnode *right, int cmp (void *one, void *two));
+t_lnode *mergesort_list(t_lnode *list, long int (*cmp)(void *one, void *two));
 
-int ft_strcmp2(void *str1, void *str2);
+long int ft_strcmp2(void *str1, void *str2);
+long int ft_strcmp2_r(void *str1, void *str2);
+long int time_cmp(void *str1, void *str2);
+long int time_cmp_r(void *str1, void *str2);
+
 #endif
