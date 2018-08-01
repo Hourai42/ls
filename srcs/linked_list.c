@@ -22,18 +22,23 @@ t_linked_list *create_list(void)
     return (list);
 }
 
+/*
+** Static memory overflowed since you were just setting pointer to static memory instead of strduping.
+*/
+
 void    add_node(void *content, t_linked_list *list)
 {
     t_lnode *new;
 
     new = malloc(sizeof(t_lnode));
-    new->content = content;
+    new->content = ft_strdup(content);
     new->next = NULL;
     if (list->start == NULL)
         list->start = new;
     else
         list->end->next = new;
     list->end = new;
+    //ft_printf("%s\n", (char *)content);
 }
 
 void free_list(t_linked_list **list)
@@ -44,6 +49,7 @@ void free_list(t_linked_list **list)
     {
         ptr = (*list)->start;
         (*list)->start = ptr->next;
+        free(ptr->content);
         free(ptr);
     }
     free(*list);
@@ -51,11 +57,11 @@ void free_list(t_linked_list **list)
 
 void read_list(t_lnode *list)
 {
-    struct stat info;
+    //struct stat info;
 
     while (list != NULL)
     {
-        lstat((char *)list->content, &info);
+        //lstat((char *)list->content, &info);
         //printf("Nano seconds: %s : %ld\n", (char *)list->content, info.st_mtimespec.tv_nsec);
         //printf("Seconds : %s : %ld\n", (char *)list->content, info.st_mtime);
         ft_printf("%s\n", (char *)list->content);

@@ -126,6 +126,18 @@ void	handle_sort(unsigned int options, t_linked_list *names)
 ** Need to handle special case of "." and ".." in recursion later.
 */
 
+int	not_permaloop(char *string)
+{
+	if (string[0] == '.')
+	{
+		if (string[1] == '\0')
+			return (NO);
+		else if (string [1] == '.' && string[2] == '\0')
+			return (NO);
+	}
+	return (YES);
+}
+
 void	handle_R(unsigned int options, t_linked_list *names, char *filename)
 {
 	t_lnode *iter;
@@ -145,7 +157,7 @@ void	handle_R(unsigned int options, t_linked_list *names, char *filename)
 	{
 		joined = ft_strjoin(file, (char *)iter->content);
 		lstat(joined, &info);
-		if (S_ISDIR(info.st_mode))
+		if (S_ISDIR(info.st_mode) && not_permaloop((char *)iter->content))
 			read_directories(joined, options);
 		free(joined);
 		iter = iter->next;
@@ -157,9 +169,6 @@ void	option_handler(unsigned int options, t_linked_list *names, char *filename)
 {
 	handle_sort(options, names);
 	read_list(names->start);
-	ft_printf("Filename : %s\n", filename);
-	ft_printf("\n");
-	sleep(1);
 	//handle_l(options, names); Method of printing data
 	if (OPT_R(options))
 		handle_R(options, names, filename);
@@ -204,6 +213,7 @@ int	read_directories(char *filename, unsigned int options)
 	while ((entry = readdir(dir_ptr)) != NULL)
 		if (!(entry->d_name[0] == '.' && !OPT_a(options)))
 			add_node(entry->d_name, names);
+	//read_list(names->start);
 	option_handler(options, names, filename);
 	//experiments(options, names);
 	//read_list(names->start);
