@@ -32,12 +32,14 @@
 #define OPT_a(x) (x & 4)
 #define OPT_r(x) (x & 8)
 #define OPT_t(x) (x & 16)
+#define is_first(x) (x & 32)
 
 #define OPT_l_on(x) (x |= 1)
 #define OPT_R_on(x) (x |= 2)
 #define OPT_a_on(x) (x |= 4)
 #define OPT_r_on(x) (x |= 8)
 #define OPT_t_on(x) (x |= 16)
+#define not_first(x) (x |= 32)
 
 /*
 ** Add to back, take from front.
@@ -87,5 +89,7 @@ long int ft_strcmp2(void *str1, void *str2);
 long int ft_strcmp2_r(void *str1, void *str2);
 long int time_cmp(void *str1, void *str2);
 long int time_cmp_r(void *str1, void *str2);
+
+int	read_directories(char *filename, unsigned int options);
 
 #endif

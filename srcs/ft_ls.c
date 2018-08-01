@@ -122,10 +122,47 @@ void	handle_sort(unsigned int options, t_linked_list *names)
 		names->start = mergesort_list(names->start, &ft_strcmp2);
 }
 
-void	option_handler(unsigned int options, t_linked_list *names)
+/*
+** Need to handle special case of "." and ".." in recursion later.
+*/
+
+void	handle_R(unsigned int options, t_linked_list *names, char *filename)
+{
+	t_lnode *iter;
+	struct stat info;
+	char *joined;
+	char *file;
+
+	if (!(is_first(options)))
+	{
+		file = ft_strdup("./");
+		not_first(options);
+	}
+	else
+		file = ft_strjoin(filename, "/");
+	iter = names->start;
+	while (iter != NULL)
+	{
+		joined = ft_strjoin(file, (char *)iter->content);
+		lstat(joined, &info);
+		if (S_ISDIR(info.st_mode))
+			read_directories(joined, options);
+		free(joined);
+		iter = iter->next;
+	}
+	free(file);
+}
+
+void	option_handler(unsigned int options, t_linked_list *names, char *filename)
 {
 	handle_sort(options, names);
-	handle_l(options, names);
+	read_list(names->start);
+	ft_printf("Filename : %s\n", filename);
+	ft_printf("\n");
+	sleep(1);
+	//handle_l(options, names); Method of printing data
+	if (OPT_R(options))
+		handle_R(options, names, filename);
 }
 
 /*
@@ -167,12 +204,14 @@ int	read_directories(char *filename, unsigned int options)
 	while ((entry = readdir(dir_ptr)) != NULL)
 		if (!(entry->d_name[0] == '.' && !OPT_a(options)))
 			add_node(entry->d_name, names);
-	option_handler(options, names);
+	option_handler(options, names, filename);
 	//experiments(options, names);
-	read_list(names->start);
+	//read_list(names->start);
 	closedir(dir_ptr);
 	// Names->front will have to be the sorted list so you can free correctly
 	free_list(&names);
+	// If strjoin method is used, may need to dup filename when sending in and free everytime
+	// for every single stack! Isn't too bad.
 	return (0);
 }
 
