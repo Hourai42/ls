@@ -49,19 +49,22 @@ long int time_cmp(void *str1, void *str2)
 
     s1 = (char *)str1;
     s2 = (char *)str2;
-    stat(s1, &info1);
-    stat(s2, &info2);
-    if (info1.st_mtimespec.tv_nsec < info2.st_mtimespec.tv_nsec)
+    lstat(s1, &info1);
+    lstat(s2, &info2);
+    if (info1.st_mtime < info2.st_mtime)
+        return (1);
+    else if (info1.st_mtime > info2.st_mtime)
         return (-1);
     else
-        return (0);
+    {
+        if (info1.st_mtimespec.tv_nsec < info2.st_mtimespec.tv_nsec)
+            return (1);
+        else if (info1.st_mtimespec.tv_nsec > info2.st_mtimespec.tv_nsec)
+            return (-1);
+        else
+            return (ft_strcmp(s1, s2));
+    }
 }
-
-/*
-** Work on the rest tomorrow. Why isn't it sorting correctly when it comes
-** to time? How will you handle the recursion? Appending path names
-** or will going into one directory then calling the recursion there work?
-*/
 
 long int time_cmp_r(void *str1, void *str2)
 {
@@ -72,10 +75,19 @@ long int time_cmp_r(void *str1, void *str2)
 
     s1 = (char *)str1;
     s2 = (char *)str2;
-    stat(s1, &info1);
-    stat(s2, &info2);
-    if (info2.st_mtimespec.tv_nsec < info1.st_mtimespec.tv_nsec)
+    lstat(s1, &info1);
+    lstat(s2, &info2);
+    if (info1.st_mtime < info2.st_mtime)
         return (-1);
+    else if (info1.st_mtime > info2.st_mtime)
+        return (1);
     else
-        return (0);
+    {
+        if (info1.st_mtimespec.tv_nsec < info2.st_mtimespec.tv_nsec)
+            return (-1);
+        else if (info1.st_mtimespec.tv_nsec > info2.st_mtimespec.tv_nsec)
+            return (1);
+        else
+            return (ft_strcmp(s2, s1));
+    }
 }

@@ -51,9 +51,14 @@ void free_list(t_linked_list **list)
 
 void read_list(t_lnode *list)
 {
+    struct stat info;
+
     while (list != NULL)
     {
-        printf("%s\n", (char *)list->content);
+        lstat((char *)list->content, &info);
+        //printf("Nano seconds: %s : %ld\n", (char *)list->content, info.st_mtimespec.tv_nsec);
+        //printf("Seconds : %s : %ld\n", (char *)list->content, info.st_mtime);
+        ft_printf("%s\n", (char *)list->content);
         list = list->next;
     }
 }

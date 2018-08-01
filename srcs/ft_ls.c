@@ -112,20 +112,20 @@ int	set_options(char **argv, unsigned int *options)
 
 void	handle_sort(unsigned int options, t_linked_list *names)
 {
-	options = 0;
-	//if (OPT_r(options))
-	//	names->start = mergesort_list(names->start, &ft_strcmp2_r);
-	//else
-	//	names->start = mergesort_list(names->start, &ft_strcmp2);
-	//if (OPT_t(options) && OPT_r(options))
-	//	names->start = mergesort_list(names->start, &time_cmp);
-	//else if (OPT_t(options))
-	names->start = mergesort_list(names->start, &time_cmp);
+	if (OPT_t(options) && OPT_r(options))
+		names->start = mergesort_list(names->start, &time_cmp_r);
+	else if (OPT_t(options))
+		names->start = mergesort_list(names->start, &time_cmp);
+	else if (OPT_r(options))
+		names->start = mergesort_list(names->start, &ft_strcmp2_r);
+	else
+		names->start = mergesort_list(names->start, &ft_strcmp2);
 }
 
 void	option_handler(unsigned int options, t_linked_list *names)
 {
 	handle_sort(options, names);
+	handle_l(options, names);
 }
 
 /*
@@ -165,7 +165,8 @@ int	read_directories(char *filename, unsigned int options)
 	if (dir_ptr == NULL)
 		return (NONEXISTENT_DIR);
 	while ((entry = readdir(dir_ptr)) != NULL)
-		add_node(entry->d_name, names);
+		if (!(entry->d_name[0] == '.' && !OPT_a(options)))
+			add_node(entry->d_name, names);
 	option_handler(options, names);
 	//experiments(options, names);
 	read_list(names->start);
