@@ -253,11 +253,24 @@ void	date(struct stat info)
 	over_six_months = (curr_time - last_modified) >= 15778476 ? 1 : 0;
 	ft_printf("%c%c%c %c%c ", ts[4], ts[5], ts[6], ts[8], ts[9]);
 	if (over_six_months)
+	{
+		ts[24] = '\0';
 		ft_printf("%s ", &ts[20]);
+	}
 	else
 		ft_printf("%c%c:%c%c ", ts[11], ts[12], ts[14], ts[15]);
 }
 
+void	read_link(char *filename)
+{
+	char buf[1024];
+	ssize_t len;
+
+	if ((len = readlink(filename, buf, sizeof(buf) - 1)) != -1)
+    	buf[len] = '\0';
+	ft_printf(" -> ");
+	ft_printf("%s\n", buf);
+}
 /*
 ** Need to sum up the total number of size in bytes divided by 512 or use st_blocks
 ** File mode(Type using ISREG, ISDIR, etc)
@@ -287,7 +300,8 @@ void	handle_list_format(t_linked_list *names, char *file)
 		permissions(info, joined);
 		links_user_group_size(info);
 		date(info);
-		ft_printf("%s\n", (char *)iter->content);
+		ft_printf("%s", (char *)iter->content);
+		use_readlink ? read_link(joined) : ft_putchar('\n');
 		free(joined);
 		iter = iter->next;
 	}
