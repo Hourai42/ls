@@ -297,7 +297,7 @@ void	handle_list_format(t_linked_list *names, char *file)
 ** Need to get the full path for each one if you wanna do the recursion correctly
 */
 
-void	option_handler(unsigned int options, t_linked_list *names, char *filename)
+void	option_handler(unsigned int options, t_linked_list *names, char *filename, long int blocks)
 {
 	char *file;
 
@@ -305,7 +305,10 @@ void	option_handler(unsigned int options, t_linked_list *names, char *filename)
 	handle_sort(options, names, file);
 	handle_printing(&options, filename);
 	if (OPT_l(options))
+	{
+		ft_printf("total %ld\n", blocks);
 		handle_list_format(names, file);
+	}
 	else
 		read_list(names->start);
 	if (OPT_R(options))
@@ -333,13 +336,12 @@ long int sum_blocks(char *filename, char *file)
 {
 	struct stat info;
 	char *joined;
-	size_t blocks;
+	long int blocks;
 
 	filename = ft_strjoin(filename, "/");
 	joined = ft_strjoin(filename, file);
 	lstat(joined, &info);
 	blocks = info.st_blocks;
-	ft_printf("%d\n", blocks);
 	free(joined);
 	free(filename);
 	return (blocks);
@@ -373,7 +375,7 @@ int	read_directories(char *filename, unsigned int options)
 			add_node(entry->d_name, names);
 			blocks += sum_blocks(filename, (char *)names->end->content);
 		}
-	option_handler(options, names, filename);
+	option_handler(options, names, filename, blocks);
 	closedir(dir_ptr);
 	free_list(&names);
 	return (0);
