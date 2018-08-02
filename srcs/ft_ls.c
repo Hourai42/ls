@@ -176,7 +176,7 @@ void	handle_printing(unsigned int *options, char *filename)
 ** st_uid and st_gid for user id and group id-- might have to use other functions but still unsure
 ** Number of bytes in the file -- st_size
 ** abbrev. month, day of month, hour, minute last modified then filename
-** if mode is l for link, filename is itself -> where it points to
+** if mode is l for link, filename is itself -> where it points to (Possibly by using readlink)
 ** Experiment to see if you can get everything in the format you wish
 */
 
