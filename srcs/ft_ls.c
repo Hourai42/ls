@@ -329,6 +329,21 @@ void	experiments(unsigned int options, t_linked_list *names)
 	ft_printf("%d\n", info.st_mtime);
 }
 
+long int sum_blocks(char *filename, char *file)
+{
+	struct stat info;
+	char *joined;
+	size_t blocks;
+
+	filename = ft_strjoin(filename, "/");
+	joined = ft_strjoin(filename, file);
+	lstat(joined, &info);
+	blocks = info.st_blocks;
+	ft_printf("%d\n", blocks);
+	free(joined);
+	free(filename);
+	return (blocks);
+}
 /*
 ** Sort by alphabetical order in Linked List
 ** Go through list twice-- once to print names, then another time 
@@ -345,14 +360,19 @@ int	read_directories(char *filename, unsigned int options)
 	DIR *dir_ptr;
 	struct dirent *entry;
 	t_linked_list *names;
+	long int blocks;
 
+	blocks = 0;
 	names = create_list();
 	dir_ptr = opendir(filename);
 	if (dir_ptr == NULL)
 		return (NONEXISTENT_DIR);
 	while ((entry = readdir(dir_ptr)) != NULL)
 		if (!(entry->d_name[0] == '.' && !OPT_a(options)))
+		{
 			add_node(entry->d_name, names);
+			blocks += sum_blocks(filename, (char *)names->end->content);
+		}
 	option_handler(options, names, filename);
 	closedir(dir_ptr);
 	free_list(&names);
