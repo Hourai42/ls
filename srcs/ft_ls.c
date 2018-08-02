@@ -168,6 +168,96 @@ void	handle_printing(unsigned int *options, char *filename)
 		not_first(*options);
 }
 
+int print(char letter)
+{
+	ft_printf("%c", letter);
+	return (0);
+}
+
+int	filemode(struct stat info)
+{
+	if (S_ISREG(info.st_mode))
+		return (print('-'));
+	else if (S_ISDIR(info.st_mode))
+		return (print('d'));
+	else if (S_ISCHR(info.st_mode))
+		return (print('c'));
+	else if (S_ISBLK(info.st_mode))	
+		return (print('b'));
+	else if (S_ISFIFO(info.st_mode))
+		return (print('p'));
+	else if (S_ISSOCK(info.st_mode))
+		return (print('s'));
+	else
+	{
+		ft_printf("%c", 'l');
+		return (1);
+	}
+}
+
+void	permissions_test(struct stat info)
+{
+	ft_printf("User permission R: %d \n", (info.st_mode & S_IRUSR));
+	ft_printf("User permission W: %d \n", (info.st_mode & S_IWUSR));
+	ft_printf("User permission X: %d \n", (info.st_mode & S_IXUSR));
+	ft_printf("Group permission R: %d \n", (info.st_mode & S_IRGRP));
+	ft_printf("Group permission W: %d \n", (info.st_mode & S_IWGRP));
+	ft_printf("Group permission X: %d \n", (info.st_mode & S_IXGRP));
+	ft_printf("Other permission R: %d \n", (info.st_mode & S_IROTH));
+	ft_printf("Other permission R: %d \n", (info.st_mode & S_IWOTH));
+	ft_printf("Other permission R: %d \n", (info.st_mode & S_IXOTH));
+}
+
+void	permissions(struct stat info, char *filename)
+{
+	ssize_t xattr;
+
+	xattr = listxattr(filename, NULL, 0, XATTR_NOFOLLOW);
+	info.st_mode & S_IRUSR ? ft_putchar('r') : ft_putchar('-');
+	info.st_mode & S_IWUSR ? ft_putchar('w') : ft_putchar('-');
+	info.st_mode & S_IXUSR ? ft_putchar('x') : ft_putchar('-');
+	info.st_mode & S_IRGRP ? ft_putchar('r') : ft_putchar('-');
+	info.st_mode & S_IWGRP ? ft_putchar('w') : ft_putchar('-');
+	info.st_mode & S_IXGRP ? ft_putchar('x') : ft_putchar('-');
+	info.st_mode & S_IROTH ? ft_putchar('r') : ft_putchar('-');
+	info.st_mode & S_IWOTH ? ft_putchar('w') : ft_putchar('-');
+	info.st_mode & S_IXOTH ? ft_putchar('x') : ft_putchar('-');
+	xattr > 0 ? ft_putchar('@') : ft_putchar(' ');
+	ft_putchar(' ');
+}
+
+void	links_user_group_size(struct stat info)
+{
+	ft_printf("%d ", info.st_nlink);
+	ft_printf("%s  ", getpwuid(info.st_uid)->pw_name);
+	ft_printf("%s ", getgrgid(info.st_gid)->gr_name);
+	ft_printf("%8d ", info.st_size);
+}
+
+/*
+** Over six months since last modified means you should
+** be replacing the hours/minutes with years.
+*/
+
+void	date(struct stat info)
+{
+	long int curr_time;
+	long int last_modified;
+	int over_six_months;
+	char *ts;
+
+
+	curr_time = time(NULL);
+	last_modified = info.st_mtime;
+	ts = ctime(&last_modified);
+	over_six_months = (curr_time - last_modified) >= 15778476 ? 1 : 0;
+	ft_printf("%c%c%c %c%c ", ts[4], ts[5], ts[6], ts[8], ts[9]);
+	if (over_six_months)
+		ft_printf("%s ", &ts[20]);
+	else
+		ft_printf("%c%c:%c%c ", ts[11], ts[12], ts[14], ts[15]);
+}
+
 /*
 ** Need to sum up the total number of size in bytes divided by 512 or use st_blocks
 ** File mode(Type using ISREG, ISDIR, etc)
@@ -180,9 +270,27 @@ void	handle_printing(unsigned int *options, char *filename)
 ** Experiment to see if you can get everything in the format you wish
 */
 
-void	handle_list_format(unsigned int options, t_linked_list *names, char *file)
+void	handle_list_format(t_linked_list *names, char *file)
 {
-	options = 0; names = 0; file = 0;
+	struct stat info;
+	t_lnode *iter;
+	char *joined;
+	int use_readlink;
+
+	use_readlink = 0;
+	iter = names->start;
+	while (iter != NULL)
+	{
+		joined = ft_strjoin(file, (char *)iter->content);
+		lstat(joined, &info);
+		use_readlink = filemode(info);
+		permissions(info, joined);
+		links_user_group_size(info);
+		date(info);
+		ft_printf("%s\n", (char *)iter->content);
+		free(joined);
+		iter = iter->next;
+	}
 }
 
 /*
@@ -193,14 +301,11 @@ void	option_handler(unsigned int options, t_linked_list *names, char *filename)
 {
 	char *file;
 
-	if (!(is_not_first(options)))
-		file = ft_strdup("./");
-	else
-		file = ft_strjoin(filename, "/");
+	file = ft_strjoin(filename, "/");
 	handle_sort(options, names, file);
 	handle_printing(&options, filename);
 	if (OPT_l(options))
-		handle_list_format(options, names, file);
+		handle_list_format(names, file);
 	else
 		read_list(names->start);
 	if (OPT_R(options))
@@ -248,15 +353,9 @@ int	read_directories(char *filename, unsigned int options)
 	while ((entry = readdir(dir_ptr)) != NULL)
 		if (!(entry->d_name[0] == '.' && !OPT_a(options)))
 			add_node(entry->d_name, names);
-	//read_list(names->start);
 	option_handler(options, names, filename);
-	//experiments(options, names);
-	//read_list(names->start);
 	closedir(dir_ptr);
-	// Names->front will have to be the sorted list so you can free correctly
 	free_list(&names);
-	// If strjoin method is used, may need to dup filename when sending in and free everytime
-	// for every single stack! Isn't too bad.
 	return (0);
 }
 

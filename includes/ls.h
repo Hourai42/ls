@@ -18,6 +18,11 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <sys/xattr.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <uuid/uuid.h>
+#include <grp.h>
 
 #define YES 1
 #define NO 0
