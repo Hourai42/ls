@@ -110,16 +110,16 @@ int	set_options(char **argv, unsigned int *options)
 		return (1);
 }
 
-void	handle_sort(unsigned int options, t_linked_list *names)
+void	handle_sort(unsigned int options, t_linked_list *names, char *file)
 {
 	if (OPT_t(options) && OPT_r(options))
-		names->start = mergesort_list(names->start, &time_cmp_r);
+		names->start = mergesort_list(names->start, &time_cmp_r, file);
 	else if (OPT_t(options))
-		names->start = mergesort_list(names->start, &time_cmp);
+		names->start = mergesort_list(names->start, &time_cmp, file);
 	else if (OPT_r(options))
-		names->start = mergesort_list(names->start, &ft_strcmp2_r);
+		names->start = mergesort_list(names->start, &ft_strcmp2_r, file);
 	else
-		names->start = mergesort_list(names->start, &ft_strcmp2);
+		names->start = mergesort_list(names->start, &ft_strcmp2, file);
 }
 
 /*
@@ -138,20 +138,12 @@ int	not_permaloop(char *string)
 	return (YES);
 }
 
-void	handle_R(unsigned int options, t_linked_list *names, char *filename)
+void	handle_R(unsigned int options, t_linked_list *names, char *file)
 {
 	t_lnode *iter;
 	struct stat info;
 	char *joined;
-	char *file;
 
-	if (!(is_first(options)))
-	{
-		file = ft_strdup("./");
-		not_first(options);
-	}
-	else
-		file = ft_strjoin(filename, "/");
 	iter = names->start;
 	while (iter != NULL)
 	{
@@ -162,16 +154,46 @@ void	handle_R(unsigned int options, t_linked_list *names, char *filename)
 		free(joined);
 		iter = iter->next;
 	}
-	free(file);
 }
+
+void	handle_printing(unsigned int *options, char *filename)
+{
+	if (is_not_first(*options))
+	{
+		ft_printf("\n");
+		if (OPT_R(*options))
+			ft_printf("%s:\n", filename);
+	}
+	else
+		not_first(*options);
+}
+
+void	handle_list_format(unsigned int options, t_linked_list *names, char *file)
+{
+	options = 0; names = 0; file = 0;
+}
+
+/*
+** Need to get the full path for each one if you wanna do the recursion correctly
+*/
 
 void	option_handler(unsigned int options, t_linked_list *names, char *filename)
 {
-	handle_sort(options, names);
-	read_list(names->start);
-	//handle_l(options, names); Method of printing data
+	char *file;
+
+	if (!(is_not_first(options)))
+		file = ft_strdup("./");
+	else
+		file = ft_strjoin(filename, "/");
+	handle_sort(options, names, file);
+	handle_printing(&options, filename);
+	if (OPT_l(options))
+		handle_list_format(options, names, file);
+	else
+		read_list(names->start);
 	if (OPT_R(options))
-		handle_R(options, names, filename);
+		handle_R(options, names, file);
+	free(file);
 }
 
 /*
@@ -186,6 +208,7 @@ void	experiments(unsigned int options, t_linked_list *names)
 	options = 0, names = 0;
 	stat(".", &info);
 	ft_printf("hi");
+	ft_printf("%s", info);
 	ft_printf("%d\n", info.st_mtime);
 }
 
@@ -236,6 +259,12 @@ int	read_directories(char *filename, unsigned int options)
 ** Begin adding basic data structures to your library!
 ** Parse(options then filenames) -> Read directories
 ** Use exit to leave since no memory is allocated yet during option parsing.
+**
+** Bonuses can be management of ACL and extended attributes
+** Column management w/o -l
+** More options
+** Colors! Depending on file type I guess
+** Optimization n' speed? lol no
 **/
 
 int main(int argc, char **argv) 

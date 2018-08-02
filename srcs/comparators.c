@@ -12,12 +12,13 @@
 
 #include "ls.h"
 
-long int ft_strcmp2(void *str1, void *str2)
+long int ft_strcmp2(void *str1, void *str2, char *file)
 {
     int i;
     char *s1;
     char *s2;
 
+    file = 0;
     i = 0;
     s1 = (char *)str1;
     s2 = (char *)str2;
@@ -26,12 +27,13 @@ long int ft_strcmp2(void *str1, void *str2)
     return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-long int ft_strcmp2_r(void *str1, void *str2)
+long int ft_strcmp2_r(void *str1, void *str2, char *file)
 {
     int i;
     char *s1;
     char *s2;
 
+    file = 0;
     i = 0;
     s1 = (char *)str2;
     s2 = (char *)str1;
@@ -40,15 +42,15 @@ long int ft_strcmp2_r(void *str1, void *str2)
     return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-long int time_cmp(void *str1, void *str2)
+long int time_cmp(void *str1, void *str2, char *file)
 {
     char *s1;
     char *s2;
     struct stat info1;
     struct stat info2;
 
-    s1 = (char *)str1;
-    s2 = (char *)str2;
+    s1 = ft_strjoin(file, (char *)str1);
+    s2 = ft_strjoin(file, (char *)str2);
     lstat(s1, &info1);
     lstat(s2, &info2);
     if (info1.st_mtime < info2.st_mtime)
@@ -62,19 +64,21 @@ long int time_cmp(void *str1, void *str2)
         else if (info1.st_mtimespec.tv_nsec > info2.st_mtimespec.tv_nsec)
             return (-1);
         else
-            return (ft_strcmp(s1, s2));
+            return (ft_strcmp((char *)str1, (char *)str2));
     }
+    free(s1);
+    free(s2);
 }
 
-long int time_cmp_r(void *str1, void *str2)
+long int time_cmp_r(void *str1, void *str2, char *file)
 {
     char *s1;
     char *s2;
     struct stat info1;
     struct stat info2;
 
-    s1 = (char *)str1;
-    s2 = (char *)str2;
+    s1 = ft_strjoin(file, (char *)str1);
+    s2 = ft_strjoin(file, (char *)str2);
     lstat(s1, &info1);
     lstat(s2, &info2);
     if (info1.st_mtime < info2.st_mtime)
@@ -88,6 +92,8 @@ long int time_cmp_r(void *str1, void *str2)
         else if (info1.st_mtimespec.tv_nsec > info2.st_mtimespec.tv_nsec)
             return (1);
         else
-            return (ft_strcmp(s2, s1));
+            return (ft_strcmp((char *)str2, (char *)str1));
     }
+    free(s1);
+    free(s2);
 }

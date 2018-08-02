@@ -74,7 +74,7 @@ void read_list(t_lnode *list)
 ** Observe how all the pointers are fixed later.
 */
 
-t_lnode *mergesort_list(t_lnode *list, long int (*cmp)(void *one, void *two))
+t_lnode *mergesort_list(t_lnode *list, long int (*cmp)(void *one, void *two, char *file), char *filename)
 {
  // Trivial case.
     if (!list || !list->next)
@@ -99,8 +99,8 @@ t_lnode *mergesort_list(t_lnode *list, long int (*cmp)(void *one, void *two))
     last->next = 0;
 
     // Recurse on the two smaller lists:
-    list = mergesort_list(list, cmp);
-    right = mergesort_list(right, cmp);
+    list = mergesort_list(list, cmp, filename);
+    right = mergesort_list(right, cmp, filename);
 
     // Merge:
     while (list || right)
@@ -112,7 +112,7 @@ t_lnode *mergesort_list(t_lnode *list, long int (*cmp)(void *one, void *two))
         } else if (!list) {
             next = right;
             right = right->next;
-        } else if (cmp(list->content, right->content) < 0) {
+        } else if (cmp(list->content, right->content, filename) < 0) {
             next = list;
             list = list->next;
         } else {

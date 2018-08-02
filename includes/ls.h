@@ -32,7 +32,7 @@
 #define OPT_a(x) (x & 4)
 #define OPT_r(x) (x & 8)
 #define OPT_t(x) (x & 16)
-#define is_first(x) (x & 32)
+#define is_not_first(x) (x & 32)
 
 #define OPT_l_on(x) (x |= 1)
 #define OPT_R_on(x) (x |= 2)
@@ -83,12 +83,12 @@ void read_list(t_lnode *list);
 ** Mergesort functions
 */
 
-t_lnode *mergesort_list(t_lnode *list, long int (*cmp)(void *one, void *two));
+t_lnode *mergesort_list(t_lnode *list, long int (*cmp)(void *one, void *two, char *file), char *filename);
 
-long int ft_strcmp2(void *str1, void *str2);
-long int ft_strcmp2_r(void *str1, void *str2);
-long int time_cmp(void *str1, void *str2);
-long int time_cmp_r(void *str1, void *str2);
+long int ft_strcmp2(void *str1, void *str2, char *file);
+long int ft_strcmp2_r(void *str1, void *str2, char *file);
+long int time_cmp(void *str1, void *str2, char *file);
+long int time_cmp_r(void *str1, void *str2, char *file);
 
 int	read_directories(char *filename, unsigned int options);
 
