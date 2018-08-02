@@ -168,6 +168,18 @@ void	handle_printing(unsigned int *options, char *filename)
 		not_first(*options);
 }
 
+/*
+** Need to sum up the total number of size in bytes divided by 512 or use st_blocks
+** File mode(Type using ISREG, ISDIR, etc)
+** Access by using macros on st_mode
+** Number of hard links in stat structure
+** st_uid and st_gid for user id and group id-- might have to use other functions but still unsure
+** Number of bytes in the file -- st_size
+** abbrev. month, day of month, hour, minute last modified then filename
+** if mode is l for link, filename is itself -> where it points to
+** Experiment to see if you can get everything in the format you wish
+*/
+
 void	handle_list_format(unsigned int options, t_linked_list *names, char *file)
 {
 	options = 0; names = 0; file = 0;
