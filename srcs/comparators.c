@@ -53,6 +53,8 @@ int				time_cmp(void *str1, void *str2, char *file)
 	s2 = ft_strjoin(file, (char *)str2);
 	lstat(s1, &info1);
 	lstat(s2, &info2);
+	free(s1);
+	free(s2);
 	if (info1.st_mtime < info2.st_mtime)
 		return (1);
 	else if (info1.st_mtime > info2.st_mtime)
@@ -66,8 +68,6 @@ int				time_cmp(void *str1, void *str2, char *file)
 		else
 			return (ft_strcmp((char *)str1, (char *)str2));
 	}
-	free(s1);
-	free(s2);
 }
 
 int				time_cmp_r(void *str1, void *str2, char *file)
@@ -81,6 +81,8 @@ int				time_cmp_r(void *str1, void *str2, char *file)
 	s2 = ft_strjoin(file, (char *)str2);
 	lstat(s1, &info1);
 	lstat(s2, &info2);
+	free(s1);
+	free(s2);
 	if (info1.st_mtime < info2.st_mtime)
 		return (-1);
 	else if (info1.st_mtime > info2.st_mtime)
@@ -94,6 +96,4 @@ int				time_cmp_r(void *str1, void *str2, char *file)
 		else
 			return (ft_strcmp((char *)str2, (char *)str1));
 	}
-	free(s1);
-	free(s2);
 }

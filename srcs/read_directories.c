@@ -25,7 +25,7 @@ int					read_directories(char *filename, unsigned int options)
 	if (dir_ptr == NULL)
 		return (NONEXISTENT_DIR);
 	while ((entry = readdir(dir_ptr)) != NULL)
-		if (!(entry->d_name[0] == '.' && !OPT_a(options)))
+		if (!(entry->d_name[0] == '.' && !OPT_A(options)))
 		{
 			add_node(entry->d_name, names);
 			blocks += sum_blocks(filename, (char *)names->end->content);

@@ -19,7 +19,7 @@ FILES = ft_ls linked_list comparators filemode handle_recur \
 		set_options read_directories
 CFILES = $(patsubst %, $(SRCS_DIR)%.c, $(FILES))
 OFILES = $(patsubst %, %.o, $(FILES))
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -fno-omit-frame-pointer
 
 #libft
 LFT = ./libft/

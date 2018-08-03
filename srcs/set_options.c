@@ -23,15 +23,15 @@ static int	valid_option(char option)
 static void	use_option_macros(unsigned int *options, char letter)
 {
 	if (letter == 'l')
-		OPT_l_on(*options);
+		OPT_L_ON(*options);
 	else if (letter == 'R')
-		OPT_R_on(*options);
+		OPT_R_ON(*options);
 	else if (letter == 'a')
-		OPT_a_on(*options);
+		OPT_A_ON(*options);
 	else if (letter == 'r')
-		OPT_r_on(*options);
+		OPT_REV_ON(*options);
 	else
-		OPT_t_on(*options);
+		OPT_T_ON(*options);
 }
 
 int			set_options(char **argv, unsigned int *options)

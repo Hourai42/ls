@@ -67,5 +67,7 @@ int					main(int argc, char **argv)
 			argv++;
 		}
 	}
+	while (1)
+		;
 	return (0);
 }

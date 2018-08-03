@@ -14,11 +14,11 @@
 
 static void	handle_sort(unsigned int options, t_linked_list *names, char *file)
 {
-	if (OPT_t(options) && OPT_r(options))
+	if (OPT_T(options) && OPT_REV(options))
 		names->start = mergesort_list(names->start, &time_cmp_r, file);
-	else if (OPT_t(options))
+	else if (OPT_T(options))
 		names->start = mergesort_list(names->start, &time_cmp, file);
-	else if (OPT_r(options))
+	else if (OPT_REV(options))
 		names->start = mergesort_list(names->start, &ft_strcmp2_r, file);
 	else
 		names->start = mergesort_list(names->start, &ft_strcmp2, file);
@@ -26,14 +26,14 @@ static void	handle_sort(unsigned int options, t_linked_list *names, char *file)
 
 static void	handle_printing(unsigned int *options, char *filename)
 {
-	if (is_not_first(*options))
+	if (IS_NOT_FIRST(*options))
 	{
 		ft_printf("\n");
 		if (OPT_R(*options))
 			ft_printf("%s:\n", filename);
 	}
 	else
-		not_first(*options);
+		NOT_FIRST(*options);
 }
 
 void		option_handler(unsigned int options, t_linked_list *names,
@@ -44,7 +44,7 @@ char *filename, long int blocks)
 	file = ft_strjoin(filename, "/");
 	handle_sort(options, names, file);
 	handle_printing(&options, filename);
-	if (OPT_l(options))
+	if (OPT_L(options))
 	{
 		ft_printf("total %ld\n", blocks);
 		handle_list_format(names, file);
