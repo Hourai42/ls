@@ -12,13 +12,13 @@
 
 #include "ls.h"
 
-static int	print(char letter)
+static char	print(char letter)
 {
 	ft_printf("%c", letter);
-	return (0);
+	return (letter);
 }
 
-int			filemode(struct stat info)
+char		filemode(struct stat info)
 {
 	if (S_ISREG(info.st_mode))
 		return (print('-'));
@@ -33,8 +33,5 @@ int			filemode(struct stat info)
 	else if (S_ISSOCK(info.st_mode))
 		return (print('s'));
 	else
-	{
-		ft_printf("%c", 'l');
-		return (1);
-	}
+		return (print('l'));
 }

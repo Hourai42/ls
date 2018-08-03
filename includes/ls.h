@@ -141,6 +141,6 @@ void				handle_recur(unsigned int options, t_linked_list *names,
 char *file);
 long int			sum_blocks(char *filename, char *file);
 void				handle_list_format(t_linked_list *names, char *file);
-int					filemode(struct stat info);
+char				filemode(struct stat info);
 
 #endif

@@ -51,12 +51,18 @@ static void		permissions(struct stat info, char *filename)
 	ft_putchar(' ');
 }
 
-static void		links_user_group_size(struct stat info)
+static void		links_user_group_size(struct stat info, char filemodo)
 {
 	ft_printf("%d ", info.st_nlink);
 	ft_printf("%s  ", getpwuid(info.st_uid)->pw_name);
 	ft_printf("%s ", getgrgid(info.st_gid)->gr_name);
-	ft_printf("%8d ", info.st_size);
+	if (filemodo == 'c' || filemodo == 'b')
+	{
+		ft_printf("%d, ", major(info.st_rdev));
+		ft_printf("%d ", minor(info.st_rdev));
+	}
+	else
+		ft_printf("%8d ", info.st_size);
 }
 
 static void		read_link(char *filename)
@@ -75,20 +81,19 @@ void			handle_list_format(t_linked_list *names, char *file)
 	struct stat	info;
 	t_lnode		*iter;
 	char		*joined;
-	int			use_readlink;
+	char		filemodo;
 
-	use_readlink = 0;
 	iter = names->start;
 	while (iter != NULL)
 	{
 		joined = ft_strjoin(file, (char *)iter->content);
 		lstat(joined, &info);
-		use_readlink = filemode(info);
+		filemodo = filemode(info);
 		permissions(info, joined);
-		links_user_group_size(info);
+		links_user_group_size(info, filemodo);
 		date(info);
 		ft_printf("%s", (char *)iter->content);
-		use_readlink ? read_link(joined) : ft_putchar('\n');
+		filemodo == 'l' ? read_link(joined) : ft_putchar('\n');
 		free(joined);
 		iter = iter->next;
 	}
