@@ -14,7 +14,9 @@ NAME = ft_ls
 SRCS_DIR = ./srcs/
 INCLUDES = ./includes/
 RM = /bin/rm -f
-FILES = ft_ls linked_list comparators
+FILES = ft_ls linked_list comparators filemode handle_recur \
+		handle_list_format mergesort_ll option_handler queue sum_blocks \
+		set_options read_directories
 CFILES = $(patsubst %, $(SRCS_DIR)%.c, $(FILES))
 OFILES = $(patsubst %, %.o, $(FILES))
 CFLAGS = -Wall -Wextra -Werror
