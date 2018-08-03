@@ -23,6 +23,7 @@
 # include <pwd.h>
 # include <uuid/uuid.h>
 # include <grp.h>
+# include <errno.h>
 
 # define YES 1
 # define NO 0

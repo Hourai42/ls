@@ -29,7 +29,10 @@ static int			error_messages(int *flag, char *error)
 	}
 	else if (*flag == NONEXISTENT_DIR)
 	{
-		ft_printf("ls: %s: No such file or directory\n", error);
+		if (errno == EACCES)
+			ft_printf("ls: %s: Permission denied\n", error);
+		else
+			ft_printf("ls: %s: No such file or directory\n", error);
 		*flag = 0;
 	}
 	return (STAY);
