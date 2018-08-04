@@ -25,6 +25,7 @@ static int			error_messages(int *flag, char *error)
 	{
 		ft_printf("ls: illegal option -- ");
 		ft_printf("%c\n", *error);
+		ft_printf("usage: ls [-Ralrt] [file ...]\n");
 		exit(0);
 	}
 	else if (*flag == NONEXISTENT_DIR)
